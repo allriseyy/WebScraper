@@ -9,7 +9,7 @@ export class BrowserManager {
 
     async startBrowser(headless: boolean = config.browser.headless): Promise<Page> {
         try {
-            logger.info('Starting browser', { headless });
+            // logger.info('Starting browser', { headless });
 
             this.browser = await chromium.launch({
                 headless,

@@ -40,7 +40,7 @@ export class WebTestingAgent {
             const urlMatch = instruction.match(/https?:\/\/[^\s]+/);
             if (urlMatch) {
                 const url = urlMatch[0];
-                logger.info('Starting Playwright agent and extract text from the website', { url });
+                logger.info(`Starting Playwright agent and extract text from the website`);
                 await this.executor.page.goto(url);
             }
             const pageContext = await this.pageAnalyzer.getPageContext();
@@ -95,7 +95,7 @@ export class WebTestingAgent {
         );
 
         const agent = await client.agents.getAgent("asst_MErmdpfEPJHOhQ16CREx4x83");
-        console.log(`Name of agent: ${agent.name}`);
+        console.log(`\n\nName of agent: ${agent.name}`);
 
         const thread = await client.agents.getThread("thread_LfpnRP5shkX8vW4lTPrbZ6nq");
         // console.log(`Retrieved thread, thread ID: ${thread.id}`);
@@ -114,21 +114,17 @@ export class WebTestingAgent {
             run = await client.agents.getRun(thread.id, run.id);
         }
 
-        console.log(`Run completed with status: ${run.status}`);
-
         // Retrieve and display messages
         const messages = await client.agents.listMessages(thread.id);
 
-        for (const dataPoint of messages.data.reverse()) {
-            console.log('***********************************************************************');
-            console.log(`${dataPoint.createdAt} - ${dataPoint.role}:`);
-            for (const contentItem of dataPoint.content) {
-                if (contentItem.type === "text") {
-                    const textContent = contentItem as { text: { value: string } };
-                     console.log(textContent.text.value);
-                }
-            }
-        }
+        console.log('\n************************************************************************************************************************************************************************');
+        console.log("************************************************************************** Request for Agent  **************************************************************************");
+        console.log(messages.data.reverse()[0].content);
+        const hello = messages.data.reverse()[0].content
+        const textContent = hello[0] as { text: { value: string } };
+        console.log('\n************************************************************************************************************************************************************************');
+        console.log("************************************************************************* Response from Agent  *************************************************************************");
+        console.log(textContent.text.value);
     }
 
     async close(): Promise<void> {

@@ -5,9 +5,9 @@ async function main() {
   await agent.initialize();
 
   const result = await agent.executeTest(
-    'Go to the https://polite-sky-033f16f03.6.azurestaticapps.net/DBS-3.html?hasAgreedTermsAndConditions=on&_eventId_submit=Continue, extract the text from the page',
+    'Navigate to https://polite-sky-033f16f03.6.azurestaticapps.net/DBS-3.html?hasAgreedTermsAndConditions=on&_eventId_submit=Continue',
   );
-  console.log("Request sent to the agent:");
+  console.log("\n\nRequest sent to the Playwright agent:");
   console.log(result);
   await agent.close();
 }

@@ -10,7 +10,7 @@ export class PlaywrightExecutor {
 
         for (const action of actions) {
             try {
-                logger.info('Executing action', { action: action.action, selector: action.selector });
+                // logger.info('Executing action', { action: action.action, selector: action.selector });
 
                 const result = await this.executeSingleAction(action);
                 results.push({
