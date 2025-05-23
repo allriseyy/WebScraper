@@ -48,6 +48,7 @@ app.post('/api/execute-test', ensureAgent, async (req, res) => {
         // }
 
         res.json(result);
+        console.log(result);
     } catch (error) {
         if (error instanceof z.ZodError) {
             return res.status(400).json({ error: 'Invalid request data', details: error.errors });

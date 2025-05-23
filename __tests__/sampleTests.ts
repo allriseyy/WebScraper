@@ -13,7 +13,7 @@ describe('Web Testing Agent', () => {
     });
 
     test('should navigate to a website', async () => {
-        const result = await agent.executeTest('Navigate to https://example.com');
+        const result = await agent.executeTest('Navigate to https://polite-sky-033f16f03.6.azurestaticapps.net/DBS-1.html?hasAgreedTermsAndConditions=on&_eventId_submit=Continue');
         expect(result.status).toBe('completed');
     });
 

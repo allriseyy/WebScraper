@@ -3,6 +3,7 @@ import { AzureKeyCredential } from '@azure/core-auth';
 import { config } from '../utils/config';
 import { logger } from '../utils/logger';
 import { PlaywrightAction } from '../utils/types';
+import { DefaultAzureCredential } from "@azure/identity";
 
 export class AzureAIClient {
     private client: OpenAIClient;
@@ -11,12 +12,12 @@ export class AzureAIClient {
     constructor() {
         this.client = new OpenAIClient(
             config.azureOpenAI.endpoint,
-            new AzureKeyCredential(config.azureOpenAI.apikey),
+            new DefaultAzureCredential(),
             {
                 apiVersion: config.azureOpenAI.apiVersion,
             }
         );
-        this.deploymentName = config.azureOpenAI.deploymentName;
+        this.deploymentName = 'gpt-4o';
     }
 
     async generatePlaywrightActions(
@@ -69,6 +70,7 @@ Generate Playwright actions: `;
                 {
                     temperature: 0.1,
                     maxTokens: 1000,
+                    model: this.deploymentName,
                 }
             );
 
