@@ -8,6 +8,7 @@ export class PageAnalyzer {
     async getPageContext(): Promise<PageContext> {
         try {
             const url = this.page.url();
+            console.log("URL:", url);
             const title = await this.page.title();
 
             // Get visible text (first 1000 chars)
@@ -18,7 +19,7 @@ export class PageAnalyzer {
             const context: PageContext = {
                 url,
                 title,
-                textContent: textContent.substring(0, 1000),
+                textContent: textContent,
             };
 
             logger.debug('Page context extracted', { url, title, textLength: textContent.length });

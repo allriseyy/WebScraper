@@ -5,9 +5,9 @@ async function main() {
   await agent.initialize();
 
   const result = await agent.executeTest(
-    'Go to the login page, enter my credentials, and verify I can access the dashboard'
+    'Go to the https://polite-sky-033f16f03.6.azurestaticapps.net/DBS-3.html?hasAgreedTermsAndConditions=on&_eventId_submit=Continue, extract the text from the page',
   );
-
+  console.log("Request sent to the agent:");
   console.log(result);
   await agent.close();
 }

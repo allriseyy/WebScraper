@@ -3,7 +3,7 @@ import { PlaywrightAction, ActionResult } from '../utils/types';
 import { logger } from '../utils/logger';
 
 export class PlaywrightExecutor {
-    constructor(private page: Page) { }
+    constructor(public page: Page) { }
 
     async executeActions(actions: PlaywrightAction[]): Promise<{ results: ActionResult[] }> {
         const results: ActionResult[] = [];

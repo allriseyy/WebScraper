@@ -4,6 +4,8 @@ import { PlaywrightExecutor } from '../playwright/actionExecutor';
 import { PageAnalyzer } from '../playwright/pageAnalyzer';
 import { TestExecutionResult, AgentConfig } from '../utils/types';
 import { logger } from '../utils/logger';
+import { AIProjectsClient } from "@azure/ai-projects";
+import { DefaultAzureCredential } from "@azure/identity";
 
 export class WebTestingAgent {
     private aiClient: AzureAIClient;
@@ -21,7 +23,7 @@ export class WebTestingAgent {
         this.executor = new PlaywrightExecutor(page);
         this.pageAnalyzer = new PageAnalyzer(page);
 
-        logger.info('Web testing agent initialized');
+        // logger.info('Web testing agent initialized');
     }
 
     async executeTest(instruction: string): Promise<TestExecutionResult> {
@@ -32,12 +34,19 @@ export class WebTestingAgent {
                 throw new Error('Agent not initialized. Call initialize() first.');
             }
 
-            logger.info('Executing test instruction', { instruction });
+            // logger.info('Executing test instruction', { instruction });
 
             // Get current page context
+            const urlMatch = instruction.match(/https?:\/\/[^\s]+/);
+            if (urlMatch) {
+                const url = urlMatch[0];
+                logger.info('Starting Playwright agent and extract text from the website', { url });
+                await this.executor.page.goto(url);
+            }
             const pageContext = await this.pageAnalyzer.getPageContext();
             const contextString = `URL: ${pageContext.url}\nTitle: ${pageContext.title}\nVisible Text: ${pageContext.textContent}`;
-
+            this.runAgentConversation(contextString);
+            
             // Generate Playwright actions using AI
             const actions = await this.aiClient.generatePlaywrightActions(instruction, contextString);
 
@@ -55,12 +64,12 @@ export class WebTestingAgent {
                 duration,
             };
 
-            logger.info('Test execution completed', {
-                instruction,
-                duration,
-                actionsCount: actions.length,
-                successCount: executionResults.results.filter(r => r.status === 'success').length
-            });
+            // logger.info('Test execution completed', {
+            //     instruction,
+            //     duration,
+            //     actionsCount: actions.length,
+            //     successCount: executionResults.results.filter(r => r.status === 'success').length
+            // });
 
             return result;
         } catch (error) {
@@ -79,9 +88,52 @@ export class WebTestingAgent {
         }
     }
 
+    async runAgentConversation(text: string): Promise<void> {
+        const client = AIProjectsClient.fromConnectionString(
+            "swedencentral.api.azureml.ms;b95c8575-9d29-4306-9d92-e7cd8757734c;ce1-swc-6fc-rg;ce1-swc-6fc-project",
+            new DefaultAzureCredential()
+        );
+
+        const agent = await client.agents.getAgent("asst_MErmdpfEPJHOhQ16CREx4x83");
+        console.log(`Name of agent: ${agent.name}`);
+
+        const thread = await client.agents.getThread("thread_LfpnRP5shkX8vW4lTPrbZ6nq");
+        // console.log(`Retrieved thread, thread ID: ${thread.id}`);
+
+        const message = await client.agents.createMessage(thread.id, {
+            role: "user",
+            content: "show me certificate check results " + text,
+        });
+        // console.log(`Created message, message ID: ${message.id}`);
+
+        let run = await client.agents.createRun(thread.id, agent.id);
+
+        // Poll for run status
+        while (run.status === "queued" || run.status === "in_progress") {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            run = await client.agents.getRun(thread.id, run.id);
+        }
+
+        console.log(`Run completed with status: ${run.status}`);
+
+        // Retrieve and display messages
+        const messages = await client.agents.listMessages(thread.id);
+
+        for (const dataPoint of messages.data.reverse()) {
+            console.log('***********************************************************************');
+            console.log(`${dataPoint.createdAt} - ${dataPoint.role}:`);
+            for (const contentItem of dataPoint.content) {
+                if (contentItem.type === "text") {
+                    const textContent = contentItem as { text: { value: string } };
+                     console.log(textContent.text.value);
+                }
+            }
+        }
+    }
+
     async close(): Promise<void> {
         await this.browserManager.closeBrowser();
-        logger.info('Web testing agent closed');
+        // logger.info('Web testing agent closed');
     }
 
     async takeScreenshot(filename?: string): Promise<string> {

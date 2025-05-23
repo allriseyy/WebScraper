@@ -20,7 +20,7 @@ export class BrowserManager {
             });
             this.page = await this.context.newPage();
 
-            logger.info('Browser started successfully');
+            // logger.info('Browser started successfully');
             return this.page;
         } catch (error) {
             logger.error('Failed to start browser', { error });
@@ -38,7 +38,7 @@ export class BrowserManager {
                 await this.browser.close();
             }
 
-            logger.info('Browser closed successfully');
+            // logger.info('Browser closed successfully');
         } catch (error) {
             logger.error('Error closing browser', { error });
 

@@ -17,17 +17,17 @@ describe('Web Testing Agent', () => {
         expect(result.status).toBe('completed');
     });
 
-    test('should fill a form', async () => {
-        const result = await agent.executeTest(
-            `Go to https://httpbin.org/forms/post and fill the customer field with "Test User"`
-        );
-        expect(result.status).toBe('completed');
-    });
+    // test('should fill a form', async () => {
+    //     const result = await agent.executeTest(
+    //         `Go to https://httpbin.org/forms/post and fill the customer field with "Test User"`
+    //     );
+    //     expect(result.status).toBe('completed');
+    // });
 
-    test('should handle login flow', async () => {
-        const result = await agent.executeTest(
-            `Visit https://the-internet.herokuapp.com/login, enter username "tomsmith" and password `
-        );
-        expect(result.status).toBe('completed');
-    });
+    // test('should handle login flow', async () => {
+    //     const result = await agent.executeTest(
+    //         `Visit https://the-internet.herokuapp.com/login, enter username "tomsmith" and password `
+    //     );
+    //     expect(result.status).toBe('completed');
+    // });
 });

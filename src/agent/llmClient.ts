@@ -57,9 +57,9 @@ Page Context: $[pageContext}
 Generate Playwright actions: `;
 
         try {
-            logger.info('Generating Playwright actions for instruction', {
-                instruction: naturalLanguageInstruction,
-            });
+            // logger.info('Generating Playwright actions for instruction', {
+            //     instruction: naturalLanguageInstruction,
+            // });
             const response = await this.client.getChatCompletions(
                 this.deploymentName,
                 [
@@ -80,7 +80,7 @@ Generate Playwright actions: `;
             }
 
             const actions = JSON.parse(content) as PlaywrightAction[];
-            logger.info('Successfully generated actions', { actionsCount: actions.length });
+            // logger.info('Successfully generated actions', { actionsCount: actions.length });
 
             return actions;
         } catch (error) {
